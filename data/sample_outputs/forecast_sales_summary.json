@@ -1,0 +1,13 @@
+{
+  "rows_in": 90,
+  "rows_out": 14,
+  "frequency": "D",
+  "forecast_model_status": "holt_winters_seasonal",
+  "backtest": {
+    "mape": 2.8152,
+    "mae": 4.4105,
+    "baseline_mape": 6.3616,
+    "baseline_mae": 9.8571,
+    "n_test": 14
+  }
+}

@@ -1,0 +1,11 @@
+# Aligns with vercel_demo/static/index.html portfolio theme
+[theme]
+base = "dark"
+primaryColor = "#6366f1"
+backgroundColor = "#0f1115"
+secondaryBackgroundColor = "#181b22"
+textColor = "#e6e8ec"
+font = "sans serif"
+
+[browser]
+gatherUsageStats = false

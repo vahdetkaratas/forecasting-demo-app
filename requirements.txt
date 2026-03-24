@@ -1,0 +1,7 @@
+# Production / Docker — pin for reproducible deploys (see requirements-dev.txt for tests)
+pandas==2.3.3
+numpy==2.4.2
+plotly==6.6.0
+streamlit==1.55.0
+statsmodels==0.14.6
+python-dotenv==1.0.1
