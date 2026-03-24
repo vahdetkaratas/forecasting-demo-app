@@ -84,10 +84,18 @@ def _render_model_status(forecast_meta: dict[str, Any]) -> None:
         }
         detail = labels.get(hw, hw)
         st.success(f"Holt-Winters (with {detail}).")
+        st.caption(
+            "Plain language: the app detected **repeating calendar patterns** (e.g. weekdays) and used them "
+            "together with overall up/down movement to extend your series."
+        )
     elif status == "holt_winters_trend_only":
         st.success(
             "Holt-Winters (trend only). Seasonal terms are disabled for this frequency "
             "or series length so the fit stays credible."
+        )
+        st.caption(
+            "Plain language: the forecast follows **overall growth or decline** without assuming a strong weekly/monthly repeat — "
+            "often because the history is short or the time step doesn’t support seasonality here."
         )
     elif status == "naive_fallback":
         labels = {
@@ -102,12 +110,19 @@ def _render_model_status(forecast_meta: dict[str, Any]) -> None:
             f"({hint})."
         )
         st.warning(msg)
+        st.caption(
+            "Plain language: the usual forecast model **did not complete**, so the app shows a **flat line at the last known value** "
+            "and warns you — the chart is still usable, but treat it as a placeholder."
+        )
         detail = forecast_meta.get("fit_error_message")
         if detail:
             st.caption("Technical detail (truncated):")
             st.code(detail, language=None)
     elif status == "naive_short_history":
         st.info("Forecast uses the last observed value — history is shorter than the minimum for Holt-Winters here.")
+        st.caption(
+            "Plain language: **not enough history** for the main model here — the app repeats the **latest number** forward."
+        )
     else:
         st.info(f"Model status: `{status}`")
 
@@ -127,35 +142,107 @@ if "run_settings_fp" not in st.session_state:
 
 st.title("Univariate demand / sales forecast")
 st.markdown(
-    "Upload a CSV or use a built-in demo, then generate a **forecast with uncertainty bands**, "
-    "**backtest metrics** vs a naive baseline, and a short **text summary**. "
-    "Built for portfolio demos — not a production forecasting platform."
+    "**You don’t need a forecasting background.** If you have **dates** and **one number per day/week/month** "
+    "(sales, visits, orders…), this app draws your **past**, projects a **future line**, and scores how plausible "
+    "that projection is on **recent history**. Try the **Demo** or upload a CSV, then use **Run forecast** in the sidebar."
+)
+st.caption(
+    "Portfolio demo — not a full planning system (no promotions, holidays, or external drivers modeled)."
 )
 
-with st.expander("How to use this page", expanded=False):
+st.info(
+    "**What this page does:** walks a single metric from **raw CSV → cleaned timeline → forecast chart → honest score** "
+    "on recent data you “hide” from the model.\n\n"
+    "**Why results don’t update on every slider move:** so the UI stays fast and each chart always matches **one deliberate "
+    "set of choices** — easier to explain in a demo or stakeholder review.\n\n"
+    "**Where to look after you run:** **Forecast & evaluation** for the story in the chart, **Model status** for what math ran, "
+    "**Narrative summary** for plain-language commentary, **Forecast output** to export files."
+)
+
+with st.expander("Read more — what each part of the app is for (and why we built it that way)", expanded=False):
     st.markdown(
         """
-1. **Data**: choose **Demo** (two sample series) or **Upload CSV** with a date column and a numeric target (`sales`, `value`, `visitors`, …).
-2. **Sidebar**: set horizon, backtest options, and resample frequency (`auto` / daily / weekly / monthly).
-3. Click **Run forecast** — fitting and charts run **only** then (not on every slider move).
-4. Read **Model status** to see whether Holt-Winters ran with seasonality, trend-only, or a naive fallback.
-5. **Download** forecast CSV / summary JSON, or save to `artifacts/forecasts/` if the server has a writable disk.
+##### The idea in one sentence
+Your past values contain **shape** (trend, sometimes weekly/monthly repeats). We **continue that shape** forward, then **check ourselves**
+by pretending we don’t know the last few points and measuring error — so you see both a picture *and* a sanity check.
+
+##### What goes in
+- **CSV:** one datetime column + one numeric column (or the built-in **Demo**).
+- **Why we insist on a clean time axis:** irregular timestamps or mixed gaps would make “one day ahead” ambiguous; resampling fixes that
+  so the forecast matches how people actually plan (daily / weekly / monthly).
+
+##### What comes out
+- **Chart:** history + future line + shaded band. The band is a **rough** uncertainty hint from past fit errors — **not** a guarantee.
+- **Metrics (MAPE / MAE):** “how wrong were we, in % and in your units?” compared to a **baseline** that always repeats the last value —
+  so you can say whether the model earned its complexity.
+- **Model status:** transparency. If data are short or the fit fails, we **say so** and fall back instead of silently showing a fancy curve.
+
+##### Sidebar choices — why they exist
+- **Horizon:** how far you ask the model to look ahead (longer = usually harder; errors compound).
+- **Holdout / rolling:** backtest design. **Holdout** = length of the “exam.” **Rolling** = average several exams so one lucky window doesn’t fool you.
+- **Adaptive holdout:** picks a sensible exam length for daily vs weekly vs monthly so you don’t need domain defaults memorized.
+- **Resample frequency:** aligns the series to a regular calendar rhythm; **auto** guesses from your gaps.
+
+##### How to use (steps)
+1. **Data:** Demo or upload CSV (`date` + `sales` / `value` / `visitors` style columns).
+2. **Sidebar:** adjust horizon, backtest options, frequency — read the **?** tooltips on each control for the “why.”
+3. **Run forecast** — compute once, review all sections below.
+4. **Download** CSV / JSON (or save to disk if the server allows).
+
+**Jargon:** *MAPE* ≈ average percent error · *MAE* ≈ average error in your units · *baseline* = “always guess the last value.”
         """
     )
 
 with st.sidebar:
     st.subheader("Forecast settings")
-    horizon = st.slider("Horizon (period)", min_value=4, max_value=90, value=30, step=1)
-    holdout = st.slider("Backtest holdout (period)", min_value=4, max_value=30, value=14, step=1)
-    adaptive_holdout = st.toggle("Use adaptive holdout", value=True)
-    rolling_mode = st.toggle("Rolling backtest", value=True)
-    rolling_splits = st.slider("Rolling split count", min_value=2, max_value=6, value=3, step=1)
+    st.caption(
+        "Heavy work runs only when you click **Run forecast** — so tweaking sliders never spams the server or mixes old/new results."
+    )
+    horizon = st.slider(
+        "Horizon (period)",
+        min_value=4,
+        max_value=90,
+        value=30,
+        step=1,
+        help="How many future periods to draw. Longer horizons are harder: uncertainty grows and the model has more room to drift.",
+    )
+    holdout = st.slider(
+        "Backtest holdout (period)",
+        min_value=4,
+        max_value=30,
+        value=14,
+        step=1,
+        help="When adaptive holdout is off: how many recent periods we hide to score the model. Mimics ‘I only knew the past — how well would I have predicted the next stretch?’",
+    )
+    adaptive_holdout = st.toggle(
+        "Use adaptive holdout",
+        value=True,
+        help="Uses recommended holdout lengths per frequency (e.g. 14 days, 8 weeks, 6 months) so defaults stay sensible without extra expertise.",
+    )
+    rolling_mode = st.toggle(
+        "Rolling backtest",
+        value=True,
+        help="Runs several overlapping backtests and averages the scores. Why: one single window can be lucky or unlucky; averaging is more representative.",
+    )
+    rolling_splits = st.slider(
+        "Rolling split count",
+        min_value=2,
+        max_value=6,
+        value=3,
+        step=1,
+        help="More splits → smoother average metric, but needs more history. Each split needs enough points before the holdout window.",
+    )
     freq_mode = st.selectbox(
         "Resample frequency",
         options=["auto", "D", "W", "M"],
         index=0,
+        help="Forces regular daily / weekly / monthly buckets (or auto-detect). Why: the forecast step size must match how you want to read the future.",
     )
-    run_clicked = st.button("Run forecast", type="primary")
+    run_clicked = st.button(
+        "Run forecast",
+        type="primary",
+        help="Runs validation, resampling, fit, backtest, and charts for the current data + all sidebar settings together.",
+    )
 
 base_dir = Path(__file__).resolve().parents[1]
 demo_sales = base_dir / "data" / "demo_sales" / "sales_ts.csv"
@@ -166,6 +253,10 @@ summary_artifact_path = base_dir / "artifacts" / "forecasts" / "summary.json"
 demo_name: str | None = None
 with st.container(border=True):
     st.subheader("Data & input")
+    st.caption(
+        "Pick **Demo** to explore instantly, or **Upload CSV** for your own series. **Why one numeric target:** this MVP models "
+        "**one line at a time** (e.g. sales *or* traffic) so the story stays easy to follow."
+    )
     source_mode = st.radio("Data source", options=["Demo", "Upload CSV"], horizontal=True)
     uploaded_file = st.file_uploader("Upload CSV", type=["csv"], disabled=source_mode != "Upload CSV")
     if source_mode == "Demo":
@@ -206,7 +297,10 @@ stale = (
     )
 )
 if stale:
-    st.info("Data or settings changed since the last run. Click **Run forecast** in the sidebar to refresh results.")
+    st.info(
+        "Data or settings changed since the last run. **Why you see this:** the chart and metrics still show the **last completed run** "
+        "so we never mix old results with new choices. Click **Run forecast** in the sidebar to recompute everything together."
+    )
 
 if run_clicked:
     try:
@@ -261,7 +355,10 @@ bundle_ok = (
 )
 
 if not bundle_ok:
-    st.info("Configure the **sidebar**, then click **Run forecast** to compute validation, chart, metrics, and downloads.")
+    st.info(
+        "Configure the **sidebar**, then click **Run forecast**. **Why nothing is shown yet:** we only compute after you confirm settings — "
+        "that way the page loads quickly and every result block refers to the same run."
+    )
     _render_app_footer()
     st.stop()
 
@@ -276,6 +373,10 @@ unit = _freq_unit(summary["used_frequency"])
 
 with st.container(border=True):
     st.subheader("Input validation")
+    st.caption(
+        "**Why this section exists:** garbage in → misleading charts out. We report duplicates, bad dates, inferred time step, "
+        "and gap handling so you (or a reviewer) can trust what the forecast was fed."
+    )
     summary_df = pd.DataFrame([summary]).T.reset_index()
     summary_df.columns = ["check", "value"]
     with st.expander("View validation details", expanded=False):
@@ -314,6 +415,10 @@ elif invalid_ratio > 0.1 or duplicate_ratio > 0.1:
 
 with st.container(border=True):
     st.subheader("Forecast & evaluation")
+    st.caption(
+        "**Why a chart *and* numbers:** the line answers ‘where might we go?’; **backtest metrics** answer ‘would this have been credible "
+        "on recent history?’ The **baseline** is intentionally simple so you can argue the model adds value."
+    )
     if b.get("is_demo"):
         st.caption(DEMO_SCENARIO_CAPTION)
     left, right = st.columns([2, 1])
@@ -323,23 +428,33 @@ with st.container(border=True):
         with st.expander("How to read the chart"):
             st.markdown(
                 """
-- **Muted line**: observed history after cleaning and resampling.
-- **Accent line**: point forecast (`yhat`) for future periods.
-- **Shaded band**: approximate uncertainty — width is ±1.96× residual standard deviation around the point forecast (treated as a rough 95% band). It is **not** a calibrated or guaranteed prediction interval.
-- Gaps or odd jumps usually mean sparse or irregular input; check **Input validation**.
+- **Muted line**: observed history after cleaning and resampling. **Why resampled:** so each step is a true “next day/week/month,” not uneven gaps.
+- **Accent line**: point forecast (`yhat`) — the model’s best single guess per future period.
+- **Shaded band**: **why it’s there** — to show *some* sense of spread around the line. **How we built it:** ±1.96× residual standard deviation from the fit (a common rough “95%” visual). **Caveat:** not a calibrated business guarantee; real drivers we don’t model can push you outside.
+- **Odd jumps?** Usually sparse or messy input — cross-check **Input validation**.
                 """
             )
 
     with right:
+        st.markdown("**Evaluation (why these metrics)**")
+        st.caption(
+            "We compare the model to a **naive baseline** (repeat the last value) so ‘lower error’ means more than ‘we drew a pretty curve.’"
+        )
         st.caption(f"Backtest holdout (effective): {effective_holdout} {unit}")
         if b["rolling_mode"]:
             st.caption(f"Backtest mode: Rolling ({b['rolling_splits']} splits)")
         if metrics["n_test"] == 0:
             st.write("Not enough data to compute backtest metrics.")
+            st.caption(
+                "**Why:** the backtest needs a held-out tail plus enough history before it. Short series or aggressive rolling settings can rule that out — better to say ‘no score’ than a fake number."
+            )
         elif not np.isfinite(metrics["mape"]) or not np.isfinite(metrics["mae"]):
             st.info(
                 "Backtest metrics are not available (non-finite values — often too little data "
                 "for the chosen rolling setup)."
+            )
+            st.caption(
+                "**Why:** when a window fails or produces undefined errors, we don’t invent a tidy score; check **Model status** and try fewer rolling splits or a shorter holdout if your series is small."
             )
         else:
             c1, c2 = st.columns(2)
@@ -372,18 +487,28 @@ with st.container(border=True):
 
 with st.container(border=True):
     st.subheader("Model status")
+    st.caption(
+        "**Why we show this explicitly:** stakeholders should know *which* machinery produced the line — full Holt-Winters, trend-only, or a transparent fallback. Hiding failures would look slick but would be misleading."
+    )
     _render_model_status(forecast_meta)
 
 with st.container(border=True):
     st.subheader("Narrative summary")
+    st.caption(
+        "**Why a text block:** some people understand a short paragraph faster than a chart. **How it’s built:** deterministic rules on your data "
+        "(not a black-box LLM) — consistent for demos and easy to reason about."
+    )
     st.write(build_explanation(ts_df, future, freq=summary["used_frequency"]))
     st.caption(
-        "This text is rule-based on your series and forecast — useful for demos, not a substitute "
-        "for domain review. The chart band reflects model residual spread, not a hard bound."
+        "Useful for walkthroughs, not a substitute for domain review. The chart band reflects residual spread, not a hard bound."
     )
 
 with st.container(border=True):
     st.subheader("Forecast output")
+    st.caption(
+        "**CSV:** the forecast table for spreadsheets or BI. **JSON:** settings, data health, model path, and metrics for auditors or pipelines. "
+        "**Why two formats:** humans vs machines — same run, different consumption."
+    )
     download_df = future.copy()
     st.dataframe(download_df, use_container_width=True, height=320)
     st.download_button(

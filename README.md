@@ -3,6 +3,37 @@
 A practical time-series forecasting app for sales and demand data.  
 It ingests CSV files, validates and normalizes the series, forecasts future values with uncertainty bands, evaluates performance with backtests, and exports both prediction and metadata artifacts.
 
+## In plain language (for any reader)
+
+**What problem does this solve?**  
+You have **one number that changes over time** — for example daily sales, website visits, or orders. People often ask: *“What might the next weeks look like, based on what already happened?”* This app answers that in a structured way: it reads your history, draws a **future continuation** (forecast), and shows **how uncertain** that guess might be (a shaded band — not a guarantee).
+
+**What do I put in?**  
+A simple table (CSV): one column for **dates** and one column for the **value** you care about (sales, demand, etc.). Or use the built-in **demo** data to try it without preparing a file.
+
+**What do I get out?**  
+- A **chart**: past values + a projected line + a rough “maybe range” around the projection.  
+- **Scores** that say how well a similar prediction would have done on **recent** data (so you are not flying blind).  
+- A short **text summary** and optional **downloads** (forecast table + a JSON report).
+
+**How do I use it in 30 seconds?**  
+Open the app → pick **Demo** or upload CSV → click **Run forecast** in the sidebar → read the chart and the “model status” line.
+
+**Words you might see (mini glossary)**  
+
+| Term | Plain meaning |
+|------|----------------|
+| **Forecast** | The app’s guess for future dates, based on patterns in the past. |
+| **Backtest** | “Pretend we were in the past, predict the next few points, and compare to what really happened.” Helps sanity-check the approach. |
+| **Holdout** | How many recent periods we hide during that check — the “exam questions” the model didn’t see while training. |
+| **MAPE / MAE** | Error measures: roughly “how far off were we, in %” (MAPE) and “how far off in the same units as your data” (MAE). Lower is better. |
+| **Baseline** | A dumb-but-useful reference: “always predict the last known value.” If the app beats that, the model adds some value. |
+| **Holt-Winters** | A standard statistical method for series with **trend** (going up/down) and sometimes **seasonality** (e.g. weekdays repeating). |
+| **Naive fallback** | If the fancy model fails, the app falls back to “repeat the last value” so you still get a result and a clear warning. |
+
+**What this app is *not***  
+It is not a full business planning tool: it does not know your marketing calendar, stockouts, or competitors. It is a **portfolio-grade demo** of a clean pipeline from CSV → validation → forecast → evaluation → export.
+
 ## Core Capabilities
 
 - Input validation summary (invalid dates, invalid values, duplicates, inferred frequency)
