@@ -1,4 +1,4 @@
-"""Read optional app footer from environment (plain text, portfolio / deploy branding)."""
+"""Read optional app footer from environment (plain text, e.g. portfolio branding)."""
 
 from __future__ import annotations
 

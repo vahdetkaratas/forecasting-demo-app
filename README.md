@@ -90,7 +90,7 @@ python src/cli.py run
 |----------|---------|
 | `APP_FOOTER_TEXT` | Optional **plain text** shown at the bottom of the Streamlit app and embedded in **exported summary JSON** when set. Empty or unset = no footer. |
 
-Local: copy `.env.example` to `.env` and set values (loaded via `python-dotenv` when installed). Docker: pass `-e APP_FOOTER_TEXT='…'`.
+Local: copy `.env.example` to `.env` and set values (loaded via `python-dotenv` when installed).
 
 ## CLI Commands
 
@@ -180,44 +180,6 @@ Metadata report including:
 - model info (`model_status`, `fallback_reason`, diagnostics when applicable)
 - metrics (`mape`, `mae`, baseline metrics, `n_test`, optional `splits_used`)
 - optional `app_footer` when `APP_FOOTER_TEXT` is set in the environment
-
-## Deployment (VPS Only)
-
-This project targets VPS deployment.
-
-### Docker
-
-```bash
-docker build -t forecasting-app .
-docker run --rm -p 8501:8501 -e APP_FOOTER_TEXT="Your name · https://example.com" forecasting-app
-```
-
-### Bare metal
-
-Recommended flow:
-
-1. Clone and install dependencies:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements-dev.txt
-```
-
-2. Validate with tests and smoke check:
-
-```bash
-python src/cli.py test
-python src/cli.py smoke
-```
-
-3. Run the app (bare metal) or use **Docker** (see [Docker (VPS)](#docker-vps)).
-
-```bash
-python -m streamlit run src/app.py --server.port 8501 --server.address 0.0.0.0
-```
-
-4. Put Nginx in front of port `8501` for domain routing and TLS.
 
 ## Limitations
 

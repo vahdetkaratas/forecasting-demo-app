@@ -1,4 +1,4 @@
-# Production / Docker — pin for reproducible deploys (see requirements-dev.txt for tests)
+# Pinned runtime dependencies (see requirements-dev.txt for tests).
 pandas==2.3.3
 numpy==2.4.2
 plotly==6.6.0
