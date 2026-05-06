@@ -1,0 +1,29 @@
+{
+  "name": "Vahdettin Karatas",
+  "identity": "Lightweight data prototypes & planning visibility — Vahdetlabs",
+  "location": "Prague, Czech Republic",
+  "portfolioUrl": "https://vahdetlabs.com/",
+  "avatarUrl": "https://vahdetkaratas.com/img/face-1.jpg",
+  "technicalFocus": [
+    "CSV-to-insight prototypes",
+    "Operational dashboards (Streamlit)",
+    "Forecasting decision-support MVPs",
+    "Clear scope & limitations upfront",
+    "Path toward larger BI / tooling investments"
+  ],
+  "reviewSectionTitle": "Next steps",
+  "footerLabel": "Commercial forecasting prototype context",
+  "footerTagline": "Planning visibility and prototypes — scoped work before heavier platforms.",
+  "socialLinks": [
+    {
+      "label": "GitHub",
+      "href": "https://github.com/vahdetkaratas",
+      "iconClass": "fab fa-github"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://linkedin.com/in/vahdetkaratas",
+      "iconClass": "fab fa-linkedin-in"
+    }
+  ]
+}

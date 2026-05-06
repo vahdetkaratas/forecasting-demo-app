@@ -1,0 +1,29 @@
+{
+  "name": "Vahdettin Karatas",
+  "identity": "Applied data — forecasting dashboards & pipelines",
+  "location": "Prague, Czech Republic",
+  "portfolioUrl": "https://vahdetkaratas.com/",
+  "avatarUrl": "https://vahdetkaratas.com/img/face-1.jpg",
+  "technicalFocus": [
+    "Streamlit apps",
+    "pandas / NumPy time-series prep",
+    "statsmodels forecasting",
+    "Plotly charts",
+    "Tests & reproducible CLI"
+  ],
+  "reviewSectionTitle": "Review this artifact",
+  "relatedSectionTitle": "Related systems",
+  "footerLabel": "Forecasting demo shell (fallback profile)",
+  "socialLinks": [
+    {
+      "label": "GitHub",
+      "href": "https://github.com/vahdetkaratas",
+      "iconClass": "fab fa-github"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://linkedin.com/in/vahdetkaratas",
+      "iconClass": "fab fa-linkedin-in"
+    }
+  ]
+}

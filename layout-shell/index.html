@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Streamlit forecasting demo: CSV upload, Holt–Winters with seasonal fallbacks, MAPE/MAE backtests, Plotly chart, CSV/JSON export.">
+  <meta name="theme-color" content="#0f1115">
+  <title>Forecasting dashboard — proof of work</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Poppins:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="shell.css">
+  <link rel="stylesheet" href="demo-content.css">
+</head>
+<body>
+  <div class="shell-outer">
+    <div class="shell-card">
+      <div class="art-info-bar">
+        <div class="art-info-bar-frame">
+          <div class="art-info-bar-header">
+            <button type="button" class="art-info-bar-btn" aria-label="Toggle info" aria-expanded="false">
+              <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <div class="art-header">
+            <div class="art-avatar">
+              <a href="https://vahdetkaratas.com/" class="art-avatar-curtain">
+                <img src="https://vahdetkaratas.com/img/face-1.jpg" alt="Vahdettin Karatas" width="90" height="90">
+                <i class="fas fa-expand" aria-hidden="true"></i>
+              </a>
+              <div class="art-lamp-light">
+                <div class="art-available-lamp"></div>
+              </div>
+            </div>
+            <h5 class="art-name mb-10"><a href="https://vahdetkaratas.com/">Vahdettin Karatas</a></h5>
+            <div class="art-sm-text">Applied data / ML engineering — pipelines, dashboards, time-series</div>
+            
+          </div>
+
+          <div id="scrollbar2" class="art-scroll-frame">
+            <div class="art-table p-15-15">
+              <ul>
+                <li><h6>Location:</h6><span>Prague, Czech Republic</span></li>
+              </ul>
+            </div>
+
+            <div class="art-ls-divider"></div>
+
+            <div class="art-knowledge-block p-30-15">
+              <h6 class="mb-15">Technical focus</h6>
+              <ul class="art-knowledge-list p-15-0">
+                <li>Streamlit interactive apps</li>
+<li>pandas data prep &amp; validation</li>
+<li>Forecasting &amp; backtesting workflows</li>
+<li>Plotly visualization</li>
+<li>Reproducible Python tooling</li>
+              </ul>
+            </div>
+
+            <div class="art-knowledge-block p-30-15">
+              <h6 class="mb-15">For hiring review</h6>
+              <ul class="art-knowledge-list p-15-0">
+                <li><a href="https://github.com/vahdetkaratas/forecasting-demo-app" target="_blank" rel="noopener noreferrer">GitHub repository</a></li>
+<li><a href="https://forecast.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Open live app</a></li>
+<li><a href="https://vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">CV / profile</a></li>
+<li><a href="https://github.com/vahdetkaratas/forecasting-demo-app#readme" target="_blank" rel="noopener noreferrer">Repository README</a></li>
+              </ul>
+            </div>
+
+            <div class="art-knowledge-block p-30-15"><h6 class="mb-15">ML systems</h6><ul class="art-knowledge-list p-15-0"><li><a href="https://vahdetkaratas.com/portfolio" target="_blank" rel="noopener noreferrer">Portfolio</a></li>
+<li><a href="https://batch-scoring.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Batch scoring</a></li>
+<li><a href="https://feature-store.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Feature store</a></li>
+<li><a href="https://vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Vahdetlabs</a></li>
+<li><a href="https://monitoring.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Monitoring &amp; data quality</a></li>
+<li><a href="https://churn.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Customer churn prediction</a></li></ul></div><div class="art-knowledge-block p-30-15"><h6 class="mb-15">Data tools</h6><ul class="art-knowledge-list p-15-0"><li><a href="https://data-cleaning.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Data cleaning toolkit</a></li>
+<li><a href="https://eda-report.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">EDA report generator</a></li>
+<li><a href="https://forecasting.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">Forecasting demo</a></li>
+<li><a href="https://ai-analysis.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">CSV analytics</a></li>
+<li><a href="https://kpi-dashboard.vahdetlabs.com/" target="_blank" rel="noopener noreferrer">KPI dashboard</a></li></ul></div>
+          </div>
+
+          <div class="art-ls-social">
+            <a href="https://github.com/vahdetkaratas" target="_blank" rel="noopener noreferrer" title="GitHub" aria-label="GitHub"><i class="fab fa-github" aria-hidden="true"></i></a>
+<a href="https://linkedin.com/in/vahdetkaratas" target="_blank" rel="noopener noreferrer" title="LinkedIn" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+          </div>
+        </div>
+      </div>
+
+      <div class="shell-main-wrap" id="shellMainWrap">
+        <div class="shell-mobile-curtain" id="shellMobileCurtain" aria-hidden="true"></div>
+        <div class="shell-main">
+          <main class="shell-scroll" id="shellScroll">
+            <div class="shell-content" id="projectContent">
+              <div class="batch-page proj-shell-page">
+                <a class="skip" href="#main">Skip to content</a>
+
+                <div class="wrap">
+                  <header>
+                    <div class="logo" id="top">Forecast <span>Streamlit MVP</span></div>
+                    <div class="nav-actions">
+                      <a class="btn btn-primary" href="https://github.com/vahdetkaratas/forecasting-demo-app" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>GitHub</a>
+<a class="btn btn-ghost" href="https://forecast.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Open live app</a>
+<a class="btn btn-ghost" href="https://vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">CV / profile</a>
+                    </div>
+                  </header>
+
+                  <div id="main">
+                    <section class="hero">
+                      <span class="hero-badge">Portfolio artifact — applied time-series + UI delivery</span>
+                      <h1>Demand / sales forecasting dashboard</h1>
+                      <p class="hero-lead">End-to-end slice I can own: CSV validation and resampling, an explicit user-triggered forecast run (no accidental recomputation on every widget change), Holt–Winters with honest seasonal/trend-only/fallback states, backtest metrics against a naive baseline, Plotly visualization, and downloadable artifacts. Demonstrates practical dashboard delivery for ops-style metrics, not paper ML.</p>
+                      <div class="hero-cta">
+                        <a class="btn btn-primary" href="https://github.com/vahdetkaratas/forecasting-demo-app" target="_blank" rel="noopener noreferrer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>GitHub</a>
+<a class="btn btn-ghost" href="https://forecast.vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">Open live app</a>
+<a class="btn btn-ghost" href="https://vahdetkaratas.com/" target="_blank" rel="noopener noreferrer">CV / profile</a>
+                      </div>
+                      <p class="hero-note">Recruiter-facing shell for forecasting.vahdetkaratas.com. Code and README live on GitHub; the interactive demo is the Streamlit deployment.</p>
+                      <div class="metrics" aria-label="Project facts">
+                        <div><span>Python</span></div>
+<div><span>Streamlit</span></div>
+<div><span>pandas</span></div>
+<div><span>Plotly</span></div>
+                      </div>
+                    </section>
+
+                    <section id="scope" aria-labelledby="h-scope"><h2 id="h-scope">Limitations &amp; scope</h2><div class="pitch"><ul><li>Univariate only — one target series per run; no promo/pricing/holiday regressors.</li>
+<li>Uncertainty bands derive from residual spread around the fit — decision support, not guaranteed intervals.</li>
+<li>Short or messy history pushes the engine toward trend-only Holt–Winters or an explicit naive last-value fallback.</li></ul></div></section>
+
+                    <section class="proj-section" aria-labelledby="overview-heading">
+  <h2 id="overview-heading">Overview</h2>
+  <div class="proj-prose">
+    <p><strong>Problem.</strong> Teams often need a readable forward view of a single KPI over time (sales, visits, orders) without standing up a full analytics stack.</p>
+    <p><strong>Approach.</strong> A Streamlit app accepts a CSV with a date column and one numeric series (or uses bundled demo series). It validates input, aligns observations to a chosen calendar frequency, fits exponential smoothing (Holt–Winters with additive trend and optional seasonality when history supports it), and surfaces fit status explicitly when seasonality is disabled or the solver falls back.</p>
+    <p><strong>Outputs.</strong> Interactive Plotly chart (history vs forecast vs residual-based band), MAPE/MAE vs a naive last-value baseline on held-out recent periods (single or rolling windows), rule-based narrative text, and download of forecast table plus JSON summary metadata.</p>
+  </div>
+</section>
+
+<section class="proj-section" aria-labelledby="workflow-heading">
+  <h2 id="workflow-heading">Workflow</h2>
+  <p class="proj-section-intro">Path through the running app (single session):</p>
+  <div class="proj-arch-visual" aria-label="Forecast pipeline">
+    <span class="proj-arch-node">CSV / demo</span>
+    <span class="proj-arch-arrow" aria-hidden="true">→</span>
+    <span class="proj-arch-node">Column detect</span>
+    <span class="proj-arch-arrow" aria-hidden="true">→</span>
+    <span class="proj-arch-node">Resample &amp; gap handling</span>
+    <span class="proj-arch-arrow" aria-hidden="true">→</span>
+    <span class="proj-arch-node">Forecast fit</span>
+    <span class="proj-arch-arrow" aria-hidden="true">→</span>
+    <span class="proj-arch-node">Backtest</span>
+    <span class="proj-arch-arrow" aria-hidden="true">→</span>
+    <span class="proj-arch-node">Chart + export</span>
+  </div>
+  <ol class="proj-steps">
+    <li class="proj-step">
+      <span class="proj-step-num">1</span>
+      <div class="proj-step-body">
+        <h3 class="proj-step-title">Load data</h3>
+        <p>Upload CSV or select a built-in demo series. Automatic detection picks time and value columns from common names (<code>date</code>, <code>sales</code>, <code>value</code>, etc.).</p>
+      </div>
+    </li>
+    <li class="proj-step">
+      <span class="proj-step-num">2</span>
+      <div class="proj-step-body">
+        <h3 class="proj-step-title">Configure &amp; run</h3>
+        <p>User sets horizon, holdout / rolling backtest options, and frequency mode (<code>auto</code>, daily, weekly, monthly). Computation runs only when <strong>Run forecast</strong> is clicked so results always match one coherent settings snapshot.</p>
+      </div>
+    </li>
+    <li class="proj-step">
+      <span class="proj-step-num">3</span>
+      <div class="proj-step-body">
+        <h3 class="proj-step-title">Prepare series</h3>
+        <p>pandas-based resampling, duplicate handling, and interpolation strategy with validation flags for gaps and zero-fill cases.</p>
+      </div>
+    </li>
+    <li class="proj-step">
+      <span class="proj-step-num">4</span>
+      <div class="proj-step-body">
+        <h3 class="proj-step-title">Forecast &amp; diagnose</h3>
+        <p>statsmodels Holt–Winters where applicable (e.g. weekly seasonal component for daily data only when enough observations exist); otherwise trend-only or naive fallback with visible status.</p>
+      </div>
+    </li>
+    <li class="proj-step">
+      <span class="proj-step-num">5</span>
+      <div class="proj-step-body">
+        <h3 class="proj-step-title">Evaluate &amp; export</h3>
+        <p>Backtest MAPE/MAE vs naive baseline; optional rolling averages across splits. Download <code>forecast.csv</code> and <code>summary.json</code>; optional server-side artifact path when writable.</p>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section class="proj-section" aria-labelledby="features-heading">
+  <h2 id="features-heading">Features</h2>
+  <div class="proj-card-grid">
+    <div class="proj-card">
+      <h3 class="proj-card-title">CSV &amp; demo paths</h3>
+      <p>Same workflow for uploaded files or packaged sample time series — useful for demos and smoke checks.</p>
+    </div>
+    <div class="proj-card">
+      <h3 class="proj-card-title">Frequency-aware smoothing</h3>
+      <p>Daily / weekly / monthly handling with conservative seasonal activation rules tied to history length.</p>
+    </div>
+    <div class="proj-card">
+      <h3 class="proj-card-title">Backtest vs baseline</h3>
+      <p>Holdout and rolling modes report error metrics against “repeat last value” so improvements are interpretable.</p>
+    </div>
+    <div class="proj-card">
+      <h3 class="proj-card-title">Plotly chart</h3>
+      <p>Historical line, point forecast, and shaded interval derived from residual spread (documented in-app as approximate).</p>
+    </div>
+    <div class="proj-card">
+      <h3 class="proj-card-title">Artifacts</h3>
+      <p>Forecast table and JSON summary including model status, resampling notes, and metric fields suitable for audit or pipelines.</p>
+    </div>
+    <div class="proj-card">
+      <h3 class="proj-card-title">Explicit UX contract</h3>
+      <p>In-app copy explains why compute is button-gated and what each status means — reduces mistaken “live auto-update” assumptions.</p>
+    </div>
+  </div>
+</section>
+
+<section class="proj-section" aria-labelledby="stack-heading">
+  <h2 id="stack-heading">Tech stack</h2>
+  <div class="proj-prose">
+    <ul>
+      <li><strong>Runtime / UI:</strong> Python 3, Streamlit.</li>
+      <li><strong>Data:</strong> pandas, NumPy — ingestion, validation, resampling, gap reporting.</li>
+      <li><strong>Models:</strong> statsmodels exponential smoothing (Holt–Winters); naive last-value fallback paths.</li>
+      <li><strong>Viz:</strong> Plotly (via Streamlit).</li>
+      <li><strong>Tests:</strong> pytest coverage for forecast helpers, fingerprints, summary export, smoke path on demo CSVs.</li>
+    </ul>
+    <p><strong>Entrypoint:</strong> <code>python src/cli.py run</code> → Streamlit runs <code>src/app.py</code>. No separate REST API in this repository.</p>
+  </div>
+</section>
+
+<section class="proj-section" aria-labelledby="live-heading">
+  <h2 id="live-heading">Deployment / live app</h2>
+  <div class="proj-prose">
+    <p>The canonical interactive deployment is the hosted Streamlit instance linked from this shell’s primary CTAs (<code>forecast.vahdetkaratas.com</code>). This HTML shell is static documentation around that app.</p>
+    <p>Repository layout: application code under <code>src/</code>, demo CSVs under <code>data/</code>, shell sources under <code>shell/</code>, rendered marketing layouts emitted as <code>layout-shell/</code> and <code>layout-shell-commercial/</code> by <code>shell/render-shell.mjs</code>.</p>
+  </div>
+</section>
+
+<section class="proj-section" aria-labelledby="limitations-body-heading">
+  <h2 id="limitations-body-heading">Limitations (detail)</h2>
+  <div class="proj-prose">
+    <p>The hero summary lists non-negotiable scope boundaries. In addition:</p>
+    <ul>
+      <li>No authentication, multi-user tenancy, or job scheduling — session-scoped Streamlit as documented in-repo.</li>
+      <li>Exports are explicit downloads (plus optional local artifact write); there is no separate analytics warehouse integration.</li>
+      <li>Model choice is fixed to exponential-smoothing family paths implemented in code — not an AutoML marketplace.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="proj-section" aria-labelledby="why-heading">
+  <h2 id="why-heading">Why this project</h2>
+  <div class="proj-prose">
+    <p>Demonstrates a complete thin vertical slice: responsible defaults for time-series prep, transparent model states, evaluation that compares against an understandable baseline, and operator-facing exports — without pretending the forecast is omniscient or production-complete.</p>
+  </div>
+</section>
+
+                  </div>
+
+                  <footer class="batch-project-footer">
+                    <p class="name">Forecasting demo</p>
+                    <p style="margin:0.35rem 0 0;font-size:0.76rem;">Proof-of-work artifact · live Streamlit demo</p>
+                  </footer>
+                </div>
+              </div>
+            </div>
+
+            <div class="container-fluid p-30-0">
+              <footer class="footer">
+                <div class="art-copy">© <span id="shellYear"></span> Vahdettin Karatas. All rights reserved.</div>
+                <div class="footer-developer">Time-series workflows, honest evaluation, and shipped UI — not slide-deck ML.</div>
+              </footer>
+            </div>
+          </main>
+        </div>
+
+        <aside class="shell-rail" aria-label="Home">
+          <div class="shell-rail-header">
+            <a class="shell-rail-home" href="https://vahdetkaratas.com/" id="shellHomeLink" title="Portfolio home" aria-label="Portfolio home">
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="shell-rail-home-icon">
+                <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
+              </svg>
+            </a>
+          </div>
+          <div class="shell-rail-spacer" aria-hidden="true"></div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <script src="shell.js"></script>
+</body>
+</html>

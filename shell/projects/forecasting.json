@@ -1,0 +1,183 @@
+{
+  "pageTitle": "Sales & demand forecasting (Streamlit)",
+  "title": "Univariate time-series forecasting dashboard",
+  "eyebrow": "Portfolio artifact — Streamlit app",
+  "summary": "Interactive MVP that ingests CSV time series (or bundled demos), resamples to a regular calendar, fits frequency-aware Holt–Winters when data allow, runs holdout and rolling backtests vs a naive baseline, and exports forecast CSV plus structured summary JSON.",
+  "metaDescription": "Streamlit forecasting demo: CSV upload, Holt–Winters with seasonal fallbacks, MAPE/MAE backtests, Plotly chart, CSV/JSON export.",
+  "heroTitle": "Demand / sales forecasting dashboard",
+  "logoLine1": "Forecast",
+  "logoLine2": "Streamlit MVP",
+  "themeColor": "#0f1115",
+  "footerProjectName": "Forecasting demo",
+  "footerProjectSub": "Streamlit UI · pandas pipeline · statsmodels Holt–Winters",
+  "heroNote": "Static shell page for context and links; the runnable UI is the hosted Streamlit app.",
+  "stack": ["Python", "Streamlit", "pandas", "Plotly"],
+  "projectLinks": [
+    {
+      "label": "GitHub",
+      "href": "https://github.com/vahdetkaratas/forecasting-demo-app",
+      "external": true
+    },
+    {
+      "label": "Open live app",
+      "href": "https://forecast.vahdetkaratas.com/",
+      "external": true
+    },
+    {
+      "label": "CV / profile",
+      "href": "https://vahdetkaratas.com/",
+      "external": true
+    }
+  ],
+  "reviewLinks": [
+    {
+      "label": "GitHub repository",
+      "href": "https://github.com/vahdetkaratas/forecasting-demo-app",
+      "external": true
+    },
+    {
+      "label": "Open live app",
+      "href": "https://forecast.vahdetkaratas.com/",
+      "external": true
+    },
+    {
+      "label": "CV / profile",
+      "href": "https://vahdetkaratas.com/",
+      "external": true
+    },
+    {
+      "label": "Repository README",
+      "href": "https://github.com/vahdetkaratas/forecasting-demo-app#readme",
+      "external": true
+    }
+  ],
+  "relatedMlSystems": [
+    { "label": "Portfolio", "href": "https://vahdetkaratas.com/portfolio", "external": true },
+    { "label": "Batch scoring", "href": "https://batch-scoring.vahdetkaratas.com/", "external": true },
+    { "label": "Feature store", "href": "https://feature-store.vahdetkaratas.com/", "external": true },
+    { "label": "Vahdetlabs", "href": "https://vahdetlabs.com/", "external": true },
+    { "label": "Monitoring & data quality", "href": "https://monitoring.vahdetlabs.com/", "external": true },
+    { "label": "Customer churn prediction", "href": "https://churn.vahdetlabs.com/", "external": true }
+  ],
+  "relatedDataTools": [
+    { "label": "Data cleaning toolkit", "href": "https://data-cleaning.vahdetlabs.com/", "external": true },
+    { "label": "EDA report generator", "href": "https://eda-report.vahdetlabs.com/", "external": true },
+    { "label": "Forecasting demo", "href": "https://forecasting.vahdetlabs.com/", "external": true },
+    { "label": "CSV analytics", "href": "https://ai-analysis.vahdetlabs.com/", "external": true },
+    { "label": "KPI dashboard", "href": "https://kpi-dashboard.vahdetlabs.com/", "external": true }
+  ],
+  "limitations": [
+    "Univariate only — one target series per run; no promo/pricing/holiday regressors.",
+    "Uncertainty bands derive from residual spread around the fit — decision support, not guaranteed intervals.",
+    "Short or messy history pushes the engine toward trend-only Holt–Winters or an explicit naive last-value fallback."
+  ],
+  "profiles": {
+    "recruiter": {
+      "pageTitle": "Forecasting dashboard — proof of work",
+      "eyebrow": "Portfolio artifact — applied time-series + UI delivery",
+      "summary": "End-to-end slice I can own: CSV validation and resampling, an explicit user-triggered forecast run (no accidental recomputation on every widget change), Holt–Winters with honest seasonal/trend-only/fallback states, backtest metrics against a naive baseline, Plotly visualization, and downloadable artifacts. Demonstrates practical dashboard delivery for ops-style metrics, not paper ML.",
+      "heroNote": "Recruiter-facing shell for forecasting.vahdetkaratas.com. Code and README live on GitHub; the interactive demo is the Streamlit deployment.",
+      "footerProjectSub": "Proof-of-work artifact · live Streamlit demo",
+      "projectLinks": [
+        {
+          "label": "GitHub",
+          "href": "https://github.com/vahdetkaratas/forecasting-demo-app",
+          "external": true
+        },
+        {
+          "label": "Open live app",
+          "href": "https://forecast.vahdetkaratas.com/",
+          "external": true
+        },
+        {
+          "label": "CV / profile",
+          "href": "https://vahdetkaratas.com/",
+          "external": true
+        }
+      ],
+      "reviewLinks": [
+        {
+          "label": "GitHub repository",
+          "href": "https://github.com/vahdetkaratas/forecasting-demo-app",
+          "external": true
+        },
+        {
+          "label": "Open live app",
+          "href": "https://forecast.vahdetkaratas.com/",
+          "external": true
+        },
+        {
+          "label": "CV / profile",
+          "href": "https://vahdetkaratas.com/",
+          "external": true
+        },
+        {
+          "label": "Repository README",
+          "href": "https://github.com/vahdetkaratas/forecasting-demo-app#readme",
+          "external": true
+        }
+      ]
+    },
+    "commercial": {
+      "pageTitle": "Forecasting prototype — planning visibility",
+      "eyebrow": "Lightweight decision-support demo",
+      "summary": "Turn a historical CSV into a forward-looking view: cleaned timeline, forecast line with a rough uncertainty band, and simple error scores on recent history so you can sanity-check before investing in heavier BI or forecasting stacks. Scoped MVP — not a replacement for enterprise demand or FP&A systems.",
+      "heroNote": "Commercial-facing shell for forecasting.vahdetlabs.com. Same Streamlit app URL as the reference deployment; engagement and scoping go through Vahdetlabs.",
+      "footerProjectSub": "Prototype · decision support, not guarantees",
+      "projectLinks": [
+        {
+          "label": "Open live app",
+          "href": "https://forecast.vahdetkaratas.com/",
+          "external": true
+        },
+        {
+          "label": "Discuss use case",
+          "href": "https://vahdetlabs.com/contact",
+          "external": true
+        },
+        {
+          "label": "Vahdetlabs",
+          "href": "https://vahdetlabs.com/",
+          "external": true
+        }
+      ],
+      "reviewLinks": [
+        {
+          "label": "Open live app",
+          "href": "https://forecast.vahdetkaratas.com/",
+          "external": true
+        },
+        {
+          "label": "Discuss use case",
+          "href": "https://vahdetlabs.com/contact",
+          "external": true
+        },
+        {
+          "label": "Vahdetlabs",
+          "href": "https://vahdetlabs.com/",
+          "external": true
+        },
+        {
+          "label": "Source on GitHub",
+          "href": "https://github.com/vahdetkaratas/forecasting-demo-app",
+          "external": true
+        }
+      ],
+      "relatedMlSystems": [
+        { "label": "Portfolio", "href": "https://vahdetkaratas.com/portfolio", "external": true },
+        { "label": "Batch scoring", "href": "https://batch-scoring.vahdetlabs.com/", "external": true },
+        { "label": "Feature store", "href": "https://feature-store.vahdetlabs.com/", "external": true },
+        { "label": "Vahdetlabs", "href": "https://vahdetlabs.com/", "external": true },
+        { "label": "Monitoring & data quality", "href": "https://monitoring.vahdetlabs.com/", "external": true },
+        { "label": "Customer churn prediction", "href": "https://churn.vahdetlabs.com/", "external": true }
+      ],
+      "relatedDataTools": [
+        { "label": "Data cleaning toolkit", "href": "https://data-cleaning.vahdetlabs.com/", "external": true },
+        { "label": "EDA report generator", "href": "https://eda-report.vahdetlabs.com/", "external": true },
+        { "label": "Forecasting demo", "href": "https://forecasting.vahdetlabs.com/", "external": true },
+        { "label": "CSV analytics", "href": "https://ai-analysis.vahdetlabs.com/", "external": true },
+        { "label": "KPI dashboard", "href": "https://kpi-dashboard.vahdetlabs.com/", "external": true }
+      ]
+    }
+  }
+}

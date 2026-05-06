@@ -1,0 +1,29 @@
+{
+  "name": "Vahdettin Karatas",
+  "identity": "Applied data / ML engineering — pipelines, dashboards, time-series",
+  "location": "Prague, Czech Republic",
+  "portfolioUrl": "https://vahdetkaratas.com/",
+  "avatarUrl": "https://vahdetkaratas.com/img/face-1.jpg",
+  "technicalFocus": [
+    "Streamlit interactive apps",
+    "pandas data prep & validation",
+    "Forecasting & backtesting workflows",
+    "Plotly visualization",
+    "Reproducible Python tooling"
+  ],
+  "reviewSectionTitle": "For hiring review",
+  "footerLabel": "Portfolio forecasting artifact",
+  "footerTagline": "Time-series workflows, honest evaluation, and shipped UI — not slide-deck ML.",
+  "socialLinks": [
+    {
+      "label": "GitHub",
+      "href": "https://github.com/vahdetkaratas",
+      "iconClass": "fab fa-github"
+    },
+    {
+      "label": "LinkedIn",
+      "href": "https://linkedin.com/in/vahdetkaratas",
+      "iconClass": "fab fa-linkedin-in"
+    }
+  ]
+}

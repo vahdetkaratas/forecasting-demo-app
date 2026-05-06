@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="{{META_DESCRIPTION}}">
+  <meta name="theme-color" content="{{THEME_COLOR}}">
+  <title>{{PAGE_TITLE}}</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="shortcut icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Poppins:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="shell.css">
+  <link rel="stylesheet" href="demo-content.css">
+</head>
+<body>
+  <div class="shell-outer">
+    <div class="shell-card">
+      <div class="art-info-bar">
+        <div class="art-info-bar-frame">
+          <div class="art-info-bar-header">
+            <button type="button" class="art-info-bar-btn" aria-label="Toggle info" aria-expanded="false">
+              <i class="fas fa-ellipsis-v" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <div class="art-header">
+            <div class="art-avatar">
+              <a href="{{PORTFOLIO_URL}}" class="art-avatar-curtain">
+                <img src="{{AVATAR_URL}}" alt="{{PROFILE_NAME}}" width="90" height="90">
+                <i class="fas fa-expand" aria-hidden="true"></i>
+              </a>
+              <div class="art-lamp-light">
+                <div class="art-available-lamp"></div>
+              </div>
+            </div>
+            <h5 class="art-name mb-10"><a href="{{PORTFOLIO_URL}}">{{PROFILE_NAME}}</a></h5>
+            <div class="art-sm-text">{{PROFILE_IDENTITY}}</div>
+            {{PROFILE_IDENTITY_SUB_HTML}}
+          </div>
+
+          <div id="scrollbar2" class="art-scroll-frame">
+            <div class="art-table p-15-15">
+              <ul>
+                <li><h6>Location:</h6><span>{{PROFILE_LOCATION}}</span></li>
+              </ul>
+            </div>
+
+            <div class="art-ls-divider"></div>
+
+            <div class="art-knowledge-block p-30-15">
+              <h6 class="mb-15">Technical focus</h6>
+              <ul class="art-knowledge-list p-15-0">
+                {{TECHNICAL_FOCUS_ITEMS}}
+              </ul>
+            </div>
+
+            <div class="art-knowledge-block p-30-15">
+              <h6 class="mb-15">{{REVIEW_SECTION_TITLE}}</h6>
+              <ul class="art-knowledge-list p-15-0">
+                {{REVIEW_LINK_ITEMS}}
+              </ul>
+            </div>
+
+            {{RELATED_GROUPS_HTML}}
+          </div>
+
+          <div class="art-ls-social">
+            {{SOCIAL_LINK_ITEMS}}
+          </div>
+        </div>
+      </div>
+
+      <div class="shell-main-wrap" id="shellMainWrap">
+        <div class="shell-mobile-curtain" id="shellMobileCurtain" aria-hidden="true"></div>
+        <div class="shell-main">
+          <main class="shell-scroll" id="shellScroll">
+            <div class="shell-content" id="projectContent">
+              <div class="batch-page proj-shell-page">
+                <a class="skip" href="#main">Skip to content</a>
+
+                <div class="wrap">
+                  <header>
+                    <div class="logo" id="top">{{LOGO_LINE_1}} <span>{{LOGO_LINE_2}}</span></div>
+                    <div class="nav-actions">
+                      {{NAV_BUTTONS}}
+                    </div>
+                  </header>
+
+                  <div id="main">
+                    <section class="hero">
+                      <span class="hero-badge">{{PROJECT_EYEBROW}}</span>
+                      <h1>{{PROJECT_HERO_TITLE}}</h1>
+                      <p class="hero-lead">{{PROJECT_SUMMARY}}</p>
+                      <div class="hero-cta">
+                        {{HERO_CTA_BUTTONS}}
+                      </div>
+                      {{HERO_NOTE_HTML}}
+                      <div class="metrics" aria-label="Project facts">
+                        {{METRICS_ITEMS}}
+                      </div>
+                    </section>
+
+                    {{LIMITATIONS_SECTION_HTML}}
+
+                    {{CONTENT_HTML}}
+                  </div>
+
+                  <footer class="batch-project-footer">
+                    <p class="name">{{PROJECT_FOOTER_TITLE}}</p>
+                    <p style="margin:0.35rem 0 0;font-size:0.76rem;">{{PROJECT_FOOTER_SUB}}</p>
+                  </footer>
+                </div>
+              </div>
+            </div>
+
+            <div class="container-fluid p-30-0">
+              <footer class="footer">
+                <div class="art-copy">© <span id="shellYear"></span> {{PROFILE_NAME}}. All rights reserved.</div>
+                <div class="footer-developer">{{FOOTER_TAGLINE}}</div>
+              </footer>
+            </div>
+          </main>
+        </div>
+
+        <aside class="shell-rail" aria-label="Home">
+          <div class="shell-rail-header">
+            <a class="shell-rail-home" href="{{PORTFOLIO_URL}}" id="shellHomeLink" title="Portfolio home" aria-label="Portfolio home">
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="shell-rail-home-icon">
+                <path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
+              </svg>
+            </a>
+          </div>
+          <div class="shell-rail-spacer" aria-hidden="true"></div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <script src="shell.js"></script>
+</body>
+</html>

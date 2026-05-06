@@ -1,0 +1,134 @@
+<section class="proj-section" aria-labelledby="overview-heading">
+  <h2 id="overview-heading">Overview</h2>
+  <div class="proj-prose">
+    <p><strong>Problem.</strong> Teams often need a readable forward view of a single KPI over time (sales, visits, orders) without standing up a full analytics stack.</p>
+    <p><strong>Approach.</strong> A Streamlit app accepts a CSV with a date column and one numeric series (or uses bundled demo series). It validates input, aligns observations to a chosen calendar frequency, fits exponential smoothing (Holt–Winters with additive trend and optional seasonality when history supports it), and surfaces fit status explicitly when seasonality is disabled or the solver falls back.</p>
+    <p><strong>Outputs.</strong> Interactive Plotly chart (history vs forecast vs residual-based band), MAPE/MAE vs a naive last-value baseline on held-out recent periods (single or rolling windows), rule-based narrative text, and download of forecast table plus JSON summary metadata.</p>
+  </div>
+</section>
+
+<section class="proj-section" aria-labelledby="workflow-heading">
+  <h2 id="workflow-heading">Workflow</h2>
+  <p class="proj-section-intro">Path through the running app (single session):</p>
+  <div class="proj-arch-visual" aria-label="Forecast pipeline">
+    <span class="proj-arch-node">CSV / demo</span>
+    <span class="proj-arch-arrow" aria-hidden="true">→</span>
+    <span class="proj-arch-node">Column detect</span>
+    <span class="proj-arch-arrow" aria-hidden="true">→</span>
+    <span class="proj-arch-node">Resample &amp; gap handling</span>
+    <span class="proj-arch-arrow" aria-hidden="true">→</span>
+    <span class="proj-arch-node">Forecast fit</span>
+    <span class="proj-arch-arrow" aria-hidden="true">→</span>
+    <span class="proj-arch-node">Backtest</span>
+    <span class="proj-arch-arrow" aria-hidden="true">→</span>
+    <span class="proj-arch-node">Chart + export</span>
+  </div>
+  <ol class="proj-steps">
+    <li class="proj-step">
+      <span class="proj-step-num">1</span>
+      <div class="proj-step-body">
+        <h3 class="proj-step-title">Load data</h3>
+        <p>Upload CSV or select a built-in demo series. Automatic detection picks time and value columns from common names (<code>date</code>, <code>sales</code>, <code>value</code>, etc.).</p>
+      </div>
+    </li>
+    <li class="proj-step">
+      <span class="proj-step-num">2</span>
+      <div class="proj-step-body">
+        <h3 class="proj-step-title">Configure &amp; run</h3>
+        <p>User sets horizon, holdout / rolling backtest options, and frequency mode (<code>auto</code>, daily, weekly, monthly). Computation runs only when <strong>Run forecast</strong> is clicked so results always match one coherent settings snapshot.</p>
+      </div>
+    </li>
+    <li class="proj-step">
+      <span class="proj-step-num">3</span>
+      <div class="proj-step-body">
+        <h3 class="proj-step-title">Prepare series</h3>
+        <p>pandas-based resampling, duplicate handling, and interpolation strategy with validation flags for gaps and zero-fill cases.</p>
+      </div>
+    </li>
+    <li class="proj-step">
+      <span class="proj-step-num">4</span>
+      <div class="proj-step-body">
+        <h3 class="proj-step-title">Forecast &amp; diagnose</h3>
+        <p>statsmodels Holt–Winters where applicable (e.g. weekly seasonal component for daily data only when enough observations exist); otherwise trend-only or naive fallback with visible status.</p>
+      </div>
+    </li>
+    <li class="proj-step">
+      <span class="proj-step-num">5</span>
+      <div class="proj-step-body">
+        <h3 class="proj-step-title">Evaluate &amp; export</h3>
+        <p>Backtest MAPE/MAE vs naive baseline; optional rolling averages across splits. Download <code>forecast.csv</code> and <code>summary.json</code>; optional server-side artifact path when writable.</p>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section class="proj-section" aria-labelledby="features-heading">
+  <h2 id="features-heading">Features</h2>
+  <div class="proj-card-grid">
+    <div class="proj-card">
+      <h3 class="proj-card-title">CSV &amp; demo paths</h3>
+      <p>Same workflow for uploaded files or packaged sample time series — useful for demos and smoke checks.</p>
+    </div>
+    <div class="proj-card">
+      <h3 class="proj-card-title">Frequency-aware smoothing</h3>
+      <p>Daily / weekly / monthly handling with conservative seasonal activation rules tied to history length.</p>
+    </div>
+    <div class="proj-card">
+      <h3 class="proj-card-title">Backtest vs baseline</h3>
+      <p>Holdout and rolling modes report error metrics against “repeat last value” so improvements are interpretable.</p>
+    </div>
+    <div class="proj-card">
+      <h3 class="proj-card-title">Plotly chart</h3>
+      <p>Historical line, point forecast, and shaded interval derived from residual spread (documented in-app as approximate).</p>
+    </div>
+    <div class="proj-card">
+      <h3 class="proj-card-title">Artifacts</h3>
+      <p>Forecast table and JSON summary including model status, resampling notes, and metric fields suitable for audit or pipelines.</p>
+    </div>
+    <div class="proj-card">
+      <h3 class="proj-card-title">Explicit UX contract</h3>
+      <p>In-app copy explains why compute is button-gated and what each status means — reduces mistaken “live auto-update” assumptions.</p>
+    </div>
+  </div>
+</section>
+
+<section class="proj-section" aria-labelledby="stack-heading">
+  <h2 id="stack-heading">Tech stack</h2>
+  <div class="proj-prose">
+    <ul>
+      <li><strong>Runtime / UI:</strong> Python 3, Streamlit.</li>
+      <li><strong>Data:</strong> pandas, NumPy — ingestion, validation, resampling, gap reporting.</li>
+      <li><strong>Models:</strong> statsmodels exponential smoothing (Holt–Winters); naive last-value fallback paths.</li>
+      <li><strong>Viz:</strong> Plotly (via Streamlit).</li>
+      <li><strong>Tests:</strong> pytest coverage for forecast helpers, fingerprints, summary export, smoke path on demo CSVs.</li>
+    </ul>
+    <p><strong>Entrypoint:</strong> <code>python src/cli.py run</code> → Streamlit runs <code>src/app.py</code>. No separate REST API in this repository.</p>
+  </div>
+</section>
+
+<section class="proj-section" aria-labelledby="live-heading">
+  <h2 id="live-heading">Deployment / live app</h2>
+  <div class="proj-prose">
+    <p>The canonical interactive deployment is the hosted Streamlit instance linked from this shell’s primary CTAs (<code>forecast.vahdetkaratas.com</code>). This HTML shell is static documentation around that app.</p>
+    <p>Repository layout: application code under <code>src/</code>, demo CSVs under <code>data/</code>, shell sources under <code>shell/</code>, rendered marketing layouts emitted as <code>layout-shell/</code> and <code>layout-shell-commercial/</code> by <code>shell/render-shell.mjs</code>.</p>
+  </div>
+</section>
+
+<section class="proj-section" aria-labelledby="limitations-body-heading">
+  <h2 id="limitations-body-heading">Limitations (detail)</h2>
+  <div class="proj-prose">
+    <p>The hero summary lists non-negotiable scope boundaries. In addition:</p>
+    <ul>
+      <li>No authentication, multi-user tenancy, or job scheduling — session-scoped Streamlit as documented in-repo.</li>
+      <li>Exports are explicit downloads (plus optional local artifact write); there is no separate analytics warehouse integration.</li>
+      <li>Model choice is fixed to exponential-smoothing family paths implemented in code — not an AutoML marketplace.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="proj-section" aria-labelledby="why-heading">
+  <h2 id="why-heading">Why this project</h2>
+  <div class="proj-prose">
+    <p>Demonstrates a complete thin vertical slice: responsible defaults for time-series prep, transparent model states, evaluation that compares against an understandable baseline, and operator-facing exports — without pretending the forecast is omniscient or production-complete.</p>
+  </div>
+</section>
