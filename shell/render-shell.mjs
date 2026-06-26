@@ -173,8 +173,14 @@ async function main() {
   const footerSub =
     project.footerProjectSub ||
     "Streamlit · pandas · statsmodels";
+  const buildId =
+    args["build-id"] ||
+    process.env.BUILD_ID ||
+    new Date().toISOString().replace(/[-:.TZ]/g, "");
+  const assetVersionQuery = `?v=${encodeURIComponent(buildId)}`;
 
   const rendered = template
+    .replaceAll("{{ASSET_VERSION_QUERY}}", escapeHtml(assetVersionQuery))
     .replaceAll("{{PAGE_TITLE}}", escapeHtml(pageTitle))
     .replaceAll("{{META_DESCRIPTION}}", escapeHtml(metaDescription))
     .replaceAll("{{THEME_COLOR}}", escapeHtml(themeColor))
